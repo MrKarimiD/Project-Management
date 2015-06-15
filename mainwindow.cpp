@@ -29,13 +29,7 @@ void MainWindow::on_add_button_clicked()
 {
     if( numberOfRows > 1 )
     {
-        QString activity_name = ui->activity_table->item(numberOfRows-1,0)->text();
-        int duration = ui->activity_table->item(numberOfRows-1,1)->text().toInt();
-        int resources = ui->activity_table->item(numberOfRows-1,2)->text().toInt();
-        QString precedence = ui->activity_table->item(numberOfRows-1,3)->text();
-        qDebug()<<activity_name<<","<<duration<<","<<resources<<","<<precedence;
-        Activity tmp(activity_name,duration,resources,precedence);
-        activity_list.append(tmp);
+        get_one_row_from_table();
     }
     ui->activity_table->insertRow(numberOfRows);
     numberOfRows++;
@@ -43,12 +37,7 @@ void MainWindow::on_add_button_clicked()
 
 void MainWindow::on_calculate_table_clicked()
 {
-    QString activity_name = ui->activity_table->item(numberOfRows-1,0)->text();
-    int duration = ui->activity_table->item(numberOfRows-1,1)->text().toInt();
-    int resources = ui->activity_table->item(numberOfRows-1,2)->text().toInt();
-    QString precedence = ui->activity_table->item(numberOfRows-1,3)->text();
-    Activity tmp(activity_name,duration,resources,precedence);
-    activity_list.append(tmp);
+    get_one_row_from_table();
 
     QList<int> linked2Start = without_precedence();
 
@@ -86,6 +75,18 @@ bool MainWindow::all_of_them_checked_forward()
     {
         Activity tmp = activity_list.at(i);
         if( !tmp.forward_checked_value() )
+            return false;
+    }
+
+    return true;
+}
+
+bool MainWindow::all_of_them_checked_backward()
+{
+    for(int i=0;i<activity_list.size();i++)
+    {
+        Activity tmp = activity_list.at(i);
+        if( !tmp.backward_checked_value() )
             return false;
     }
 
@@ -143,6 +144,23 @@ int MainWindow::find_max_EF(QString name)
     return output;
 }
 
+void MainWindow::get_one_row_from_table()
+{
+    QString activity_name = ui->activity_table->item(numberOfRows-1,0)->text();
+    int duration = ui->activity_table->item(numberOfRows-1,1)->text().toInt();
+    int resources = ui->activity_table->item(numberOfRows-1,2)->text().toInt();
+    QString precedence = ui->activity_table->item(numberOfRows-1,3)->text();
+    qDebug()<<activity_name<<","<<duration<<","<<resources<<","<<precedence;
+
+    QStringList str_list = precedence.split(",");
+    for(int i=0;i<str_list.size();i++)
+    {
+        add_to_successors(str_list.at(i),activity_name);
+    }
+    Activity tmp(activity_name,duration,resources,precedence);
+    activity_list.append(tmp);
+}
+
 QList<int> MainWindow::find_precedence(QString activity_name)
 {
     QList<int> output;
@@ -161,6 +179,17 @@ QList<int> MainWindow::find_precedence(QString activity_name)
 
     return output;
 
+}
+
+void MainWindow::add_to_successors(QString activity, QString succesor)
+{
+    int mainIndex = find_by_name(activity);
+    if( mainIndex != -1 )
+    {
+        Activity tmp = activity_list.at(mainIndex);
+        tmp.append_successor(succesor);
+        activity_list.replace(mainIndex,tmp);
+    }
 }
 
 int MainWindow::find_by_name(QString name)

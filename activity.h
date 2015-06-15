@@ -13,6 +13,8 @@ public:
     void set_ES(int ES);
     void set_LF(int LF);
 
+    void append_successor(QString input);
+
     bool forward_checked_value();
     bool backward_checked_value();
     QString get_precedence();
@@ -29,6 +31,7 @@ private:
     int duration;
     int resources;
     QString precedence;
+    QString successors;
     bool forward_checked;
     bool backward_checked;
 };

@@ -28,11 +28,14 @@ private:
     QList<Activity> activity_list,calculated_list,uncalculated_list;
 
     bool all_of_them_checked_forward();
+    bool all_of_them_checked_backward();
     QList<int> without_precedence();
     QList<int> find_precedence(QString activity_name);
+    void add_to_successors(QString activity,QString succesor);
     int find_by_name(QString name);
     bool check_all_precedences(QString name);
     int find_max_EF(QString name);
+    void get_one_row_from_table();
 };
 
 #endif // MAINWINDOW_H

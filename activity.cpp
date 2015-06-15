@@ -34,6 +34,17 @@ void Activity::set_LF(int LF)
     check_backward();
 }
 
+void Activity::append_successor(QString input)
+{
+    if( this->successors.isEmpty() )
+        this->successors = input;
+    else
+    {
+        this->successors.append(",");
+        this->successors.append(input);
+    }
+}
+
 bool Activity::forward_checked_value()
 {
     return this->forward_checked;
@@ -62,7 +73,7 @@ int Activity::get_EF()
 QString Activity::get_information()
 {
     return name+"=>  Early:("+QString::number(ES)+","+QString::number(EF)+")  Late:("+
-            QString::number(LS)+","+QString::number(LF)+")";
+            QString::number(LS)+","+QString::number(LF)+")  "+successors;
 }
 
 void Activity::check_forward()
