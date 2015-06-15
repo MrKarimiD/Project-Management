@@ -18,8 +18,10 @@ public:
     bool forward_checked_value();
     bool backward_checked_value();
     QString get_precedence();
+    QString get_successors();
     QString get_name();
     int get_EF();
+    int get_LS();
 
     QString get_information();
 

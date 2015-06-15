@@ -60,6 +60,11 @@ QString Activity::get_precedence()
     return this->precedence;
 }
 
+QString Activity::get_successors()
+{
+    return this->successors;
+}
+
 QString Activity::get_name()
 {
     return this->name;
@@ -68,6 +73,11 @@ QString Activity::get_name()
 int Activity::get_EF()
 {
     return this->EF;
+}
+
+int Activity::get_LS()
+{
+    return this->LS;
 }
 
 QString Activity::get_information()

@@ -39,6 +39,7 @@ void MainWindow::on_calculate_table_clicked()
 {
     get_one_row_from_table();
 
+    // Early Time Scheduling
     QList<int> linked2Start = without_precedence();
 
     for(int i=0;i<linked2Start.size();i++)
@@ -57,6 +58,41 @@ void MainWindow::on_calculate_table_clicked()
             if( !tmp.forward_checked_value() && check_all_precedences(tmp.get_name()) )
             {
                 tmp.set_ES(find_max_EF(tmp.get_name()));
+                activity_list.replace(i,tmp);
+            }
+        }
+    }
+
+    //Late Time Scheduling
+    int finish_id = find_by_name("finish");
+    if( finish_id == -1 )
+    {
+        qDebug()<<"There is a problem here!";
+        return ;
+    }
+
+    Activity last_one = activity_list.at(finish_id);
+    last_one.set_LF(last_one.get_EF());
+    activity_list.replace(finish_id,last_one);
+
+    QList<int> linked2finish = linked_to_finish();
+
+    for(int i=0;i<linked2finish.size();i++)
+    {
+        Activity tmp = activity_list.at(linked2finish.at(i));
+        tmp.set_LF(last_one.get_LS());
+        activity_list.replace(linked2finish.at(i),tmp);
+    }
+
+    while ( !all_of_them_checked_backward() )
+    {
+        for(int i=0;i<activity_list.size();i++)
+        {
+            Activity tmp = activity_list.at(i);
+
+            if( !tmp.backward_checked_value() && check_all_successors(tmp.get_name()) )
+            {
+                tmp.set_LF(find_min_LS(tmp.get_name()));
                 activity_list.replace(i,tmp);
             }
         }
@@ -107,6 +143,20 @@ QList<int> MainWindow::without_precedence()
     return output;
 }
 
+QList<int> MainWindow::linked_to_finish()
+{
+    QList<int> output;
+
+    for(int i=0;i<activity_list.size();i++)
+    {
+        Activity tmp = activity_list.at(i);
+        if( tmp.get_successors() == "finish" )
+            output.append(i);
+    }
+
+    return output;
+}
+
 bool MainWindow::check_all_precedences(QString name)
 {
     QList<int> precedence_ids = find_precedence(name);
@@ -117,6 +167,25 @@ bool MainWindow::check_all_precedences(QString name)
     {
         Activity tmp = activity_list.at(precedence_ids.at(i));
         if( !tmp.forward_checked_value() )
+        {
+            output = false;
+            break;
+        }
+    }
+
+    return output;
+}
+
+bool MainWindow::check_all_successors(QString name)
+{
+    QList<int> successors_ids = find_successors(name);
+
+    bool output = true;
+
+    for(int i=0;i<successors_ids.size();i++)
+    {
+        Activity tmp = activity_list.at(successors_ids.at(i));
+        if( !tmp.backward_checked_value() )
         {
             output = false;
             break;
@@ -138,6 +207,24 @@ int MainWindow::find_max_EF(QString name)
         if( tmp.get_EF() > output )
         {
             output = tmp.get_EF();
+        }
+    }
+
+    return output;
+}
+
+int MainWindow::find_min_LS(QString name)
+{
+    QList<int> successors_ids = find_successors(name);
+
+    int output = 300000;
+
+    for(int i=0;i<successors_ids.size();i++)
+    {
+        Activity tmp = activity_list.at(successors_ids.at(i));
+        if( tmp.get_LS() < output )
+        {
+            output = tmp.get_LS();
         }
     }
 
@@ -178,7 +265,25 @@ QList<int> MainWindow::find_precedence(QString activity_name)
     }
 
     return output;
+}
 
+QList<int> MainWindow::find_successors(QString activity_name)
+{
+    QList<int> output;
+
+    int mainIndex = find_by_name(activity_name);
+
+    Activity tmp = activity_list.at(mainIndex);
+    QString successors = tmp.get_successors();
+    QStringList string_list = successors.split(",");
+
+    for(int i=0;i<string_list.size();i++)
+    {
+        int index = find_by_name(string_list.at(i));
+        output.append(index);
+    }
+
+    return output;
 }
 
 void MainWindow::add_to_successors(QString activity, QString succesor)
