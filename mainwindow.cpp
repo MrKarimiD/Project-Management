@@ -101,11 +101,107 @@ void MainWindow::on_calculate_table_clicked()
         }
     }
 
+    // Rsource Planning
+    resource_planing();
+
     for(int i=0;i<activity_list.size();i++)
     {
         Activity tmp = activity_list.at(i);
         qDebug()<<tmp.get_information();
     }
+}
+
+void MainWindow::resource_planing()
+{
+    int T=0;
+
+    int finish_id = find_by_name("finish");
+    if( finish_id == -1 )
+    {
+        qDebug()<<"There is a problem in resource planning!";
+        return ;
+    }
+
+    Activity last_one = activity_list.at(finish_id);
+
+    int max_num = last_one.get_LF()*2;
+    int resource1_per_day[max_num];
+    int resource2_per_day[max_num];
+
+    for(int i=0;i<max_num;i++)
+    {
+        resource1_per_day[i] = ui->maxRes1_lineedit->text().toInt();
+        resource2_per_day[i] = ui->maxRes2_lineedit->text().toInt();
+    }
+
+    while ( !all_of_them_checked_resource() )
+    {
+        QList<int> EAS = ready_for_resource_planing(T);
+        QList<int> OSS = sort_activity_based_on_LS(EAS);
+
+        for(int i=0;i<OSS.size();i++)
+        {
+            Activity tmp = activity_list.at(OSS.at(i));
+            if( (tmp.get_resource1() <= resource1_per_day[T]) &&
+                    (tmp.get_resource2() <= resource2_per_day[T]) )
+            {
+                tmp.set_rpStart(T);
+                activity_list.replace(OSS.at(i), tmp);
+                for( int j=0;j<tmp.get_duration();j++)
+                {
+                    resource1_per_day[T+j] = resource1_per_day[T+j] - tmp.get_resource1();
+                    resource2_per_day[T+j] = resource2_per_day[T+j] - tmp.get_resource2();
+                }
+            }
+        }
+
+        T++;
+    }
+}
+
+QList<int> MainWindow::ready_for_resource_planing(int today)
+{
+    QList<int> output;
+
+    for(int i=0;i<activity_list.size();i++)
+    {
+        Activity tmp = activity_list.at(i);
+        if( !tmp.resource_checked_value() && check_all_precedences_resource(tmp.get_name(),today) )
+            output.append(i);
+    }
+
+    return output;
+}
+
+QList<int> MainWindow::sort_activity_based_on_LS(QList<int> input)
+{
+    QList<int> output = input;
+
+    for(int i=0;i<output.size();i++)
+    {
+        for(int j=i+1;j<output.size();j++)
+        {
+            Activity first = activity_list.at(output.at(i));
+            Activity second = activity_list.at(output.at(j));
+            if( first.get_LS() > second.get_LS() )
+            {
+                int tmp = output.at(i);
+                output.replace(i,output.at(j));
+                output.replace(j,tmp);
+            }
+            else if( first.get_LS() == second.get_LS() )
+            {
+                if( first.get_duration() > second.get_duration() )
+                {
+                    int tmp = output.at(i);
+                    output.replace(i,output.at(j));
+                    output.replace(j,tmp);
+                }
+            }
+        }
+    }
+
+    return output;
 }
 
 bool MainWindow::all_of_them_checked_forward()
@@ -126,6 +222,18 @@ bool MainWindow::all_of_them_checked_backward()
     {
         Activity tmp = activity_list.at(i);
         if( !tmp.backward_checked_value() )
+            return false;
+    }
+
+    return true;
+}
+
+bool MainWindow::all_of_them_checked_resource()
+{
+    for(int i=0;i<activity_list.size();i++)
+    {
+        Activity tmp = activity_list.at(i);
+        if( !tmp.resource_checked_value() )
             return false;
     }
 
@@ -170,6 +278,25 @@ bool MainWindow::check_all_precedences(QString name)
     {
         Activity tmp = activity_list.at(precedence_ids.at(i));
         if( !tmp.forward_checked_value() )
+        {
+            output = false;
+            break;
+        }
+    }
+
+    return output;
+}
+
+bool MainWindow::check_all_precedences_resource(QString name, int today)
+{
+    QList<int> precedence_ids = find_precedence(name);
+
+    bool output = true;
+
+    for(int i=0;i<precedence_ids.size();i++)
+    {
+        Activity tmp = activity_list.at(precedence_ids.at(i));
+        if( !tmp.resource_checked_value() || today<tmp.get_rp_finish() )
         {
             output = false;
             break;
@@ -265,7 +392,8 @@ QList<int> MainWindow::find_precedence(QString activity_name)
     for(int i=0;i<string_list.size();i++)
     {
         int index = find_by_name(string_list.at(i));
-        output.append(index);
+        if( index != -1 )
+            output.append(index);
     }
 
     return output;

@@ -22,8 +22,17 @@ public:
     QString get_name();
     int get_EF();
     int get_LS();
+    int get_LF();
+    int get_duration();
+    int get_rp_finish();
+    int get_resource1();
+    int get_resource2();
 
     QString get_information();
+
+    void set_rpStart(int start);
+    void resource_checked();
+    bool resource_checked_value();
 
     void check_forward();
     void check_backward();
@@ -37,6 +46,10 @@ private:
     QString successors;
     bool forward_checked;
     bool backward_checked;
+
+    bool rp_done;
+    int rp_start;
+    int rp_finish;
 };
 
 #endif // ACTIVITY_H
