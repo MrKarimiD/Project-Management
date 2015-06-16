@@ -1,12 +1,13 @@
 #include "activity.h"
 
-Activity::Activity(QString name, int duration, int resources, QString precedence)
+Activity::Activity(QString name, int duration, int resources1, int resources2, QString precedence)
 {
     this->forward_checked = false;
     this->backward_checked = false;
     this->name = name;
     this->duration = duration;
-    this->resources = resources;
+    this->resources1 = resources1;
+    this->resources2 = resources2;
     this->precedence = precedence;
 }
 

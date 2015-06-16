@@ -13,11 +13,14 @@ MainWindow::MainWindow(QWidget *parent) :
     QTableWidgetItem *newItem2 = new QTableWidgetItem("Duration");
     ui->activity_table->setItem(0, 1, newItem2);
 
-    QTableWidgetItem *newItem3 = new QTableWidgetItem("Resource");
+    QTableWidgetItem *newItem3 = new QTableWidgetItem("Resource1");
     ui->activity_table->setItem(0, 2, newItem3);
 
-    QTableWidgetItem *newItem4 = new QTableWidgetItem("Precedence");
+    QTableWidgetItem *newItem4 = new QTableWidgetItem("Resource2");
     ui->activity_table->setItem(0, 3, newItem4);
+
+    QTableWidgetItem *newItem5 = new QTableWidgetItem("Precedence");
+    ui->activity_table->setItem(0, 4, newItem5);
 }
 
 MainWindow::~MainWindow()
@@ -235,16 +238,17 @@ void MainWindow::get_one_row_from_table()
 {
     QString activity_name = ui->activity_table->item(numberOfRows-1,0)->text();
     int duration = ui->activity_table->item(numberOfRows-1,1)->text().toInt();
-    int resources = ui->activity_table->item(numberOfRows-1,2)->text().toInt();
-    QString precedence = ui->activity_table->item(numberOfRows-1,3)->text();
-    qDebug()<<activity_name<<","<<duration<<","<<resources<<","<<precedence;
+    int resources1 = ui->activity_table->item(numberOfRows-1,2)->text().toInt();
+    int resources2 = ui->activity_table->item(numberOfRows-1,3)->text().toInt();
+    QString precedence = ui->activity_table->item(numberOfRows-1,4)->text();
+    qDebug()<<activity_name<<","<<duration<<","<<resources1<<","<<resources2<<","<<precedence;
 
     QStringList str_list = precedence.split(",");
     for(int i=0;i<str_list.size();i++)
     {
         add_to_successors(str_list.at(i),activity_name);
     }
-    Activity tmp(activity_name,duration,resources,precedence);
+    Activity tmp(activity_name,duration,resources1,resources2,precedence);
     activity_list.append(tmp);
 }
 

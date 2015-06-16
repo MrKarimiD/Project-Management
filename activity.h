@@ -6,7 +6,7 @@
 class Activity
 {
 public:
-    Activity(QString name ,int duration, int resources, QString precedence);
+    Activity(QString name ,int duration, int resources1, int resources2, QString precedence);
     int free_float();
     int total_float();
 
@@ -31,7 +31,8 @@ private:
     QString name;
     int ES,EF,LS,LF;
     int duration;
-    int resources;
+    int resources1;
+    int resources2;
     QString precedence;
     QString successors;
     bool forward_checked;
