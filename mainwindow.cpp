@@ -112,7 +112,19 @@ void MainWindow::on_calculate_table_clicked()
         qDebug()<<tmp.get_information();
     }
 
+    //Draw Gantt Chart
     draw_gannt_chart();
+
+
+    QPixmap pix("gantt.png");
+    QRect rect(0, 0, pix.width(), pix.height()-10);
+    QPixmap cropped = pix.copy(rect);
+
+    QPainter paint(&cropped);
+    paint.setPen(QColor(0,0,0));
+    paint.drawRect(0,0,cropped.width(), cropped.height());
+    ui->gantt_label->setPixmap(cropped);
+
 }
 
 void MainWindow::resource_planing()

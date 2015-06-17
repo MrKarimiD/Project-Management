@@ -5,6 +5,8 @@
 #include "activity.h"
 #include "QDebug"
 #include "chartdir.h"
+#include <QMessageBox>
+#include <QPainter>
 
 namespace Ui {
 class MainWindow;
