@@ -212,11 +212,11 @@ bool MainWindow::draw_gannt_chart()
 {
     // data for the gantt chart, representing the start date, end date and names for various
     // activities
-    double startDate[activity_list.size()];
-    double endDate[activity_list.size()];
-    const char *labels[activity_list.size()];
+    double startDate[activity_list.size()-1];
+    double endDate[activity_list.size()-1];
+    const char *labels[activity_list.size()-1];
 
-    for(int i=0;i<activity_list.size();i++)
+    for(int i=0;i<activity_list.size()-1;i++)
     {
         Activity tmp = activity_list.at(i);
         QDate start = ui->start_dateEdit->date();
@@ -258,7 +258,7 @@ bool MainWindow::draw_gannt_chart()
     end_date = end_date.addDays(last_one.get_rp_finish());
     c->yAxis()->setDateScale(Chart::chartTime(input_date.year(), input_date.month(), input_date.day()),
                              Chart::chartTime(end_date.year(), end_date.month(), end_date.day()),
-                             86400 * 7);
+                             86400 * 1);
 
     // Set multi-style axis label formatting. Month labels are in Arial Bold font in "mmm d" format.
     // Weekly labels just show the day of month and use minor tick (by using '-' as first character
