@@ -224,24 +224,13 @@ bool MainWindow::draw_gannt_chart()
         QDate finish = ui->start_dateEdit->date();
         finish = finish.addDays(tmp.get_rp_finish());
 
-        QByteArray array = tmp.get_name().toLocal8Bit();
-        labels[i] = array.data();
+        char* p = new char[tmp.get_name().length() + 1];
+        strcpy(p, tmp.get_name().toLatin1().constData());
+        labels[i] = p ;
+
         startDate[i] = Chart::chartTime(start.year(), start.month(), start.day());
         endDate[i] = Chart::chartTime(finish.year(), finish.month(), finish.day());
     }
-
-
-//    {Chart::chartTime(2004, 8, 16), Chart::chartTime(2004, 8, 30),
-//                          Chart::chartTime(2004, 9, 13), Chart::chartTime(2004, 9, 20), Chart::chartTime(2004, 9, 27),
-//                          Chart::chartTime(2004, 10, 4), Chart::chartTime(2004, 10, 25), Chart::chartTime(2004, 11, 1
-//                          ), Chart::chartTime(2004, 11, 8)};
-//    double endDate[] = {Chart::chartTime(2004, 8, 30), Chart::chartTime(2004, 9, 13),
-//                        Chart::chartTime(2004, 9, 27), Chart::chartTime(2004, 10, 4), Chart::chartTime(2004, 10, 11
-//                        ), Chart::chartTime(2004, 11, 8), Chart::chartTime(2004, 11, 8), Chart::chartTime(2004, 11,
-//                        22), Chart::chartTime(2004, 11, 22)};
-//    const char *labels[] = {"Market Research", "Define Specifications", "Overall Archiecture",
-//                            "Project Planning", "Detail Design", "Software Development", "Test Plan", "Testing and QA",
-//                            "User Documentation"};
 
     // Create a XYChart object of size 620 x 280 pixels. Set background color to light blue
     // (ccccff), with 1 pixel 3D border effect.
