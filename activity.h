@@ -24,6 +24,7 @@ public:
     int get_LS();
     int get_LF();
     int get_duration();
+    int get_rp_start();
     int get_rp_finish();
     int get_resource1();
     int get_resource2();

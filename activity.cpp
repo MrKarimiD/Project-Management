@@ -92,6 +92,11 @@ int Activity::get_duration()
     return this->duration;
 }
 
+int Activity::get_rp_start()
+{
+    return this->rp_start;
+}
+
 int Activity::get_rp_finish()
 {
     return this->rp_finish;

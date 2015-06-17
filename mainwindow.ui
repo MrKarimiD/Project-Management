@@ -95,7 +95,7 @@
        <number>5</number>
       </property>
       <attribute name="horizontalHeaderVisible">
-       <bool>true</bool>
+       <bool>false</bool>
       </attribute>
       <attribute name="horizontalHeaderCascadingSectionResizes">
        <bool>false</bool>
@@ -112,7 +112,7 @@
      <attribute name="title">
       <string>Settings</string>
      </attribute>
-     <widget class="QDateEdit" name="dateEdit">
+     <widget class="QDateEdit" name="start_dateEdit">
       <property name="geometry">
        <rect>
         <x>210</x>

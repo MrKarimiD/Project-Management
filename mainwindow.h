@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "activity.h"
 #include "QDebug"
+#include "chartdir.h"
 
 namespace Ui {
 class MainWindow;
@@ -30,6 +31,8 @@ private:
     void resource_planing();
     QList<int> ready_for_resource_planing(int today);
     QList<int> sort_activity_based_on_LS(QList<int> input);
+
+    bool draw_gannt_chart();
 
     bool all_of_them_checked_forward();
     bool all_of_them_checked_backward();
